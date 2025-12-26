@@ -1,0 +1,790 @@
+{
+  "info": {
+    "name": "Online Exam Platform API",
+    "description": "API collection for Online Exam Platform backend with ES Modules",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "student_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "instructor_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "branch_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "track_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Check if the server and database are running"
+      },
+      "response": []
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Add Student User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('student_id', jsonData.data.user.id);",
+                  "    console.log('Student Token saved:', jsonData.data.token);",
+                  "    console.log('Student ID:', jsonData.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ahmed Ali\",\n  \"email\": \"ahmed.ali@test.com\",\n  \"password\": \"password123\",\n  \"dateOfBirth\": \"2000-01-15\",\n  \"trackId\": 1,\n  \"phone\": \"01234567890\",\n  \"address\": \"Cairo, Egypt\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/add-user/student",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "add-user", "student"]
+            },
+            "description": "Register a new student account"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Instructor User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('instructor_id', jsonData.data.user.id);",
+                  "    console.log('Instructor Token saved:', jsonData.data.token);",
+                  "    console.log('Instructor ID:', jsonData.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Mohamed Hassan\",\n  \"email\": \"dr.mohamed@test.com\",\n  \"password\": \"password123\",\n  \"dateOfBirth\": \"1985-03-22\",\n  \"phone\": \"01198765432\",\n  \"specialization\": \"Computer Science\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/add-user/instructor",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "add-user", "instructor"]
+            },
+            "description": "Register a new instructor account"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    console.log('Token saved:', jsonData.data.token);",
+                  "    console.log('User:', jsonData.data.user);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmed.ali@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login as a student"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Instructor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    console.log('Token saved:', jsonData.data.token);",
+                  "    console.log('User:', jsonData.data.user);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dr.mohamed@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login as an instructor"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Get current user profile (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newpassword456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "change-password"]
+            },
+            "description": "Change user password (requires authentication)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Test Cases",
+      "item": [
+        {
+          "name": "Login - Invalid Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"invalid@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Test login with invalid email (should return 401)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Wrong Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmed.ali@test.com\",\n  \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Test login with wrong password (should return 401)"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Student - Duplicate Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Another Student\",\n  \"email\": \"ahmed.ali@test.com\",\n  \"password\": \"password123\",\n  \"dateOfBirth\": \"2001-05-10\",\n  \"trackId\": 1,\n  \"phone\": \"01012345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/add-user/student",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "add-user", "student"]
+            },
+            "description": "Test adding student with duplicate email (should return 400)"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Student - Missing Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Student\",\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/add-user/student",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "add-user", "student"]
+            },
+            "description": "Test adding student with missing required fields (should return 400)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile - No Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Test getting profile without token (should return 401)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile - Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_here",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Test getting profile with invalid token (should return 401)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Branches",
+      "item": [
+        {
+          "name": "Get All Branches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/branches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branches"]
+            },
+            "description": "Get all branches (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Branch by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/branches/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branches", "1"]
+            },
+            "description": "Get branch by ID (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Branch",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('branch_id', jsonData.data.id);",
+                  "    console.log('Branch ID saved:', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ITI Cairo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/branches",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branches"]
+            },
+            "description": "Create a new branch (Instructor only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Branch",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"ITI New Cairo\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/branches/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branches", "1"]
+            },
+            "description": "Update branch by ID (Instructor only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/branches/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branches", "1"]
+            },
+            "description": "Delete branch by ID (Instructor only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tracks",
+      "item": [
+        {
+          "name": "Get All Tracks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tracks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tracks"]
+            },
+            "description": "Get all tracks (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Track by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tracks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tracks", "1"]
+            },
+            "description": "Get track by ID (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Track",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('track_id', jsonData.data.id);",
+                  "    console.log('Track ID saved:', jsonData.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Full Stack .NET\",\n  \"managerId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tracks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tracks"]
+            },
+            "description": "Create a new track (Instructor only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Track",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Full Stack .NET Updated\",\n  \"managerId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tracks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tracks", "1"]
+            },
+            "description": "Update track by ID (Instructor only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Track",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tracks/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tracks", "1"]
+            },
+            "description": "Delete track by ID (Instructor only)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Branch-Track Relations",
+      "item": [
+        {
+          "name": "Get All Branch-Track Relations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/branch-tracks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branch-tracks"]
+            },
+            "description": "Get all branch-track relations (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Branch-Track Relation",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/branch-tracks/1/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branch-tracks", "1", "1"]
+            },
+            "description": "Get specific branch-track relation (requires authentication)"
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Track to Branch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"branchId\": 1,\n  \"trackId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/branch-tracks",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branch-tracks"]
+            },
+            "description": "Assign track to branch (Instructor only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Branch-Track Relation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newBranchId\": 2,\n  \"newTrackId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/branch-tracks/1/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branch-tracks", "1", "1"]
+            },
+            "description": "Update branch-track relation (Instructor only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Track from Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/branch-tracks/1/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "branch-tracks", "1", "1"]
+            },
+            "description": "Remove track from branch (Instructor only)"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

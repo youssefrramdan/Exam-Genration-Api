@@ -1,0 +1,1730 @@
+{
+  "info": {
+    "_postman_id": "add428d8-525e-4a8a-b82f-596ea3c05176",
+    "name": "Online Exam Platform API",
+    "description": "Complete API collection for Online Exam Platform - Organized by User Roles",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51075381",
+    "_collection_link": "https://speeding-water-590648.postman.co/workspace/Team-Workspace~33fce659-359d-4b86-8506-781ce5fec2cf/collection/51075381-add428d8-525e-4a8a-b82f-596ea3c05176?action=share&source=collection_link&creator=51075381"
+  },
+  "item": [
+    {
+      "name": "🔐 Admin/Management (Instructor)",
+      "item": [
+        {
+          "name": "User Management",
+          "item": [
+            {
+              "name": "Add Student User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set('student_id', jsonData.data.user.id);",
+                      "    console.log('✅ Student created');",
+                      "    console.log('Student ID:', jsonData.data.user.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Ahmed Ali\",\n  \"email\": \"ahmed.ali@test.com\",\n  \"password\": \"password123\",\n  \"dateOfBirth\": \"2000-01-15\",\n  \"trackId\": 1,\n  \"phone\": \"01234567890\",\n  \"address\": \"Cairo, Egypt\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/add-user/student",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "add-user", "student"]
+                },
+                "description": "Register a new student account"
+              },
+              "response": []
+            },
+            {
+              "name": "Add Instructor User",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set('instructor_id', jsonData.data.user.id);",
+                      "    console.log('✅ Instructor created');",
+                      "    console.log('Instructor ID:', jsonData.data.user.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Dr. Mohamed Hassan\",\n  \"email\": \"dr.mohamed@test.com\",\n  \"password\": \"password123\",\n  \"dateOfBirth\": \"1985-03-22\",\n  \"phone\": \"01198765432\",\n  \"specialization\": \"Computer Science\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/add-user/instructor",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "auth", "add-user", "instructor"]
+                },
+                "description": "Register a new instructor account"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Branch Management",
+          "item": [
+            {
+              "name": "Create Branch",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set('branch_id', jsonData.data.id);",
+                      "    console.log('✅ Branch created');",
+                      "    console.log('Branch ID:', jsonData.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"ITI Cairo\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/branches",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branches"]
+                },
+                "description": "Create a new branch"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Branch",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"ITI New Cairo\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/branches/{{branch_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branches", "{{branch_id}}"]
+                },
+                "description": "Update branch details"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Branch",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/branches/{{branch_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branches", "{{branch_id}}"]
+                },
+                "description": "Delete a branch"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Track Management",
+          "item": [
+            {
+              "name": "Create Track",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set('track_id', jsonData.data.id);",
+                      "    console.log('✅ Track created');",
+                      "    console.log('Track ID:', jsonData.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Full Stack .NET\",\n  \"managerId\": {{instructor_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/tracks",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "tracks"]
+                },
+                "description": "Create a new track"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Track",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Full Stack .NET Updated\",\n  \"managerId\": {{instructor_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/tracks/{{track_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "tracks", "{{track_id}}"]
+                },
+                "description": "Update track details"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Track",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/tracks/{{track_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "tracks", "{{track_id}}"]
+                },
+                "description": "Delete a track"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Course Management",
+          "item": [
+            {
+              "name": "Create Course",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set('course_id', jsonData.data.id);",
+                      "    console.log('✅ Course created');",
+                      "    console.log('Course ID:', jsonData.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Artificial Intelligence\",\n  \"code\": \"AI101\",\n  \"duration\": 3\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/courses",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "courses"]
+                },
+                "description": "Create a new course"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Course",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Advanced Artificial Intelligence\",\n  \"code\": \"AI201\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/courses/{{course_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "courses", "{{course_id}}"]
+                },
+                "description": "Update course details"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Course",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/courses/{{course_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "courses", "{{course_id}}"]
+                },
+                "description": "Delete a course"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Assignment Management",
+          "item": [
+            {
+              "name": "Assign Track to Branch",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"branchId\": {{branch_id}},\n  \"trackId\": {{track_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/branch-tracks",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branch-tracks"]
+                },
+                "description": "Assign a track to a branch"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Branch-Track Relation",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"newBranchId\": 2,\n  \"newTrackId\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/branch-tracks/{{branch_id}}/{{track_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "branch-tracks",
+                    "{{branch_id}}",
+                    "{{track_id}}"
+                  ]
+                },
+                "description": "Update branch-track relation"
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Track from Branch",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/branch-tracks/{{branch_id}}/{{track_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "branch-tracks",
+                    "{{branch_id}}",
+                    "{{track_id}}"
+                  ]
+                },
+                "description": "Remove track from branch"
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Instructor to Course",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"instructorId\": {{instructor_id}},\n  \"courseId\": {{course_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/assign-course",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "instructor-course", "assign-course"]
+                },
+                "description": "Assign an instructor to a course"
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Instructor from Course",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/assign-course/{{instructor_id}}/{{course_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "instructor-course",
+                    "assign-course",
+                    "{{instructor_id}}",
+                    "{{course_id}}"
+                  ]
+                },
+                "description": "Remove instructor from course"
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Instructor to Track",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"instructorId\": {{instructor_id}},\n  \"trackId\": {{track_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/assign-track",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "instructor-course", "assign-track"]
+                },
+                "description": "Assign instructor to track"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Student Management",
+          "item": [
+            {
+              "name": "Get All Students",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/students",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "students"]
+                },
+                "description": "Get all students with their tracks"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Student",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Ahmed Mohamed\",\n  \"email\": \"ahmed.mohamed@test.com\",\n  \"dateOfBirth\": \"2000-05-20\",\n  \"trackId\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/students/{{student_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "students", "{{student_id}}"]
+                },
+                "description": "Update student details"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Student",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/students/{{student_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "students", "{{student_id}}"]
+                },
+                "description": "Delete student and all related data"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Question Management",
+          "item": [
+            {
+              "name": "Add Question (MCQ)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"questionText\": \"What does SQL stand for?\",\n  \"questionType\": \"MCQ\",\n  \"correctAnswer\": \"Structured Query Language\",\n  \"courseId\": {{course_id}},\n  \"choice1\": \"Simple Query Language\",\n  \"choice2\": \"Structured Query Language\",\n  \"choice3\": \"System Query Language\",\n  \"choice4\": \"None of the above\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/questions",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions"]
+                },
+                "description": "Add a new MCQ question with choices"
+              },
+              "response": []
+            },
+            {
+              "name": "Add Question (True/False)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"questionText\": \"SQL is a programming language?\",\n  \"questionType\": \"TF\",\n  \"correctAnswer\": \"False\",\n  \"courseId\": {{course_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/questions",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions"]
+                },
+                "description": "Add a new True/False question"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Question Details",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/questions/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions", "1"]
+                },
+                "description": "Get question details with choices as array"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Question Details V2 (Pivoted)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/questions/1/v2",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions", "1", "v2"]
+                },
+                "description": "Get question details with choices as columns (optimized for UI)"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Question (MCQ)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"questionText\": \"What is SQL?\",\n  \"questionType\": \"MCQ\",\n  \"correctAnswer\": \"Structured Query Language\",\n  \"choice1\": \"Structured Query Language\",\n  \"choice2\": \"Simple Query Language\",\n  \"choice3\": \"System Query Language\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/questions/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions", "1"]
+                },
+                "description": "Update question and its choices"
+              },
+              "response": []
+            },
+            {
+              "name": "Update Question (TF)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"questionText\": \"SQL is a query language?\",\n  \"questionType\": \"TF\",\n  \"correctAnswer\": \"True\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/questions/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions", "1"]
+                },
+                "description": "Update True/False question"
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Question",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/questions/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "questions", "1"]
+                },
+                "description": "Delete question and all its choices"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Exam Management (Instructor)",
+          "item": [
+            {
+              "name": "Generate Exam",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    var jsonData = pm.response.json();",
+                      "    if (jsonData.data && jsonData.data.examId) {",
+                      "        pm.collectionVariables.set('exam_id', jsonData.data.examId);",
+                      "        console.log('✅ Exam generated');",
+                      "        console.log('Exam ID:', jsonData.data.examId);",
+                      "    }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"SQL Basics Midterm\",\n  \"type\": \"Midterm\",\n  \"duration\": 60,\n  \"tfCount\": 5,\n  \"mcqCount\": 10,\n  \"examGrade\": 30,\n  \"courseId\": {{course_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/exams/generate",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "generate"]
+                },
+                "description": "Generate exam with random questions"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Exams",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/instructor/my-exams",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "instructor", "my-exams"]
+                },
+                "description": "Get all exams created by me"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Exam Questions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/{{exam_id}}/questions",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "{{exam_id}}", "questions"]
+                },
+                "description": "Get all questions in an exam"
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Question Grade",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"examId\": {{exam_id}},\n  \"questionId\": 1,\n  \"questionGrade\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/exams/assign-grade",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "assign-grade"]
+                },
+                "description": "Assign grade to a question in exam"
+              },
+              "response": []
+            },
+            {
+              "name": "Validate Exam Grade",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/{{exam_id}}/validate",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "{{exam_id}}", "validate"]
+                },
+                "description": "Validate total question grades match exam grade"
+              },
+              "response": []
+            },
+            {
+              "name": "Finalize Exam",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/{{exam_id}}/finalize",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "{{exam_id}}", "finalize"]
+                },
+                "description": "Finalize exam (make it available to students)"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Student Course Assignment",
+          "item": [
+            {
+              "name": "Get Student Courses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/students/courses/{{student_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "students", "courses", "{{student_id}}"]
+                },
+                "description": "Get courses for a specific student"
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Course from Student",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/students/assign-course/{{student_id}}/{{course_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "students",
+                    "assign-course",
+                    "{{student_id}}",
+                    "{{course_id}}"
+                  ]
+                },
+                "description": "Remove a course from a student"
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Course to Student",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"studentId\": {{student_id}},\n  \"courseId\": {{course_id}}\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/students/assign-course",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "students", "assign-course"]
+                },
+                "description": "Assign a course to a student"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Remove Course from Student",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/students/assign-course/{{student_id}}/{{course_id}}",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "students",
+                "assign-course",
+                "{{student_id}}",
+                "{{course_id}}"
+              ]
+            },
+            "description": "Remove a course from a student"
+          },
+          "response": []
+        }
+      ],
+      "description": "Administrative APIs - Requires Instructor role with elevated permissions"
+    },
+    {
+      "name": "Authentifcation",
+      "item": [
+        {
+          "name": "Login - Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('student_id', jsonData.data.user.id);",
+                  "    console.log('✅ Student logged in');",
+                  "    console.log('Token:', jsonData.data.token);",
+                  "    console.log('Student ID:', jsonData.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ahmed.ali@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login as a student user"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Instructor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.collectionVariables.set('instructor_id', jsonData.data.user.id);",
+                  "    console.log('✅ Instructor logged in');",
+                  "    console.log('Token:', jsonData.data.token);",
+                  "    console.log('Instructor ID:', jsonData.data.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dr.mohamedes@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login as an instructor user"
+          },
+          "response": []
+        }
+      ],
+      "description": "APIs that don't require authentication"
+    },
+    {
+      "name": "User Profile (Student & Instructor)",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Get current user profile (Student or Instructor)"
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newpassword456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "change-password"]
+            },
+            "description": "Change password for current user"
+          },
+          "response": []
+        }
+      ],
+      "description": "APIs for managing user profile - Available to all authenticated users"
+    },
+    {
+      "name": "Browse (Student & Instructor)",
+      "item": [
+        {
+          "name": "Branches",
+          "item": [
+            {
+              "name": "Get All Branches",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/branches",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branches"]
+                },
+                "description": "View all branches"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Branch by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/branches/{{branch_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branches", "{{branch_id}}"]
+                },
+                "description": "View specific branch details"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Tracks",
+          "item": [
+            {
+              "name": "Get All Tracks",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/tracks",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "tracks"]
+                },
+                "description": "View all tracks"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Track by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/tracks/{{track_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "tracks", "{{track_id}}"]
+                },
+                "description": "View specific track details"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Courses",
+          "item": [
+            {
+              "name": "Get All Courses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/courses",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "courses"]
+                },
+                "description": "View all courses"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Course by ID",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/courses/{{course_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "courses", "{{course_id}}"]
+                },
+                "description": "View specific course details"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Branch-Track Relations",
+          "item": [
+            {
+              "name": "Get All Branch-Track Relations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/branch-tracks",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "branch-tracks"]
+                },
+                "description": "View all branch-track relations"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Branch-Track Relation",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/branch-tracks/{{branch_id}}/{{track_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "branch-tracks",
+                    "{{branch_id}}",
+                    "{{track_id}}"
+                  ]
+                },
+                "description": "View specific branch-track relation"
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "Read-only APIs - Available to all authenticated users"
+    },
+    {
+      "name": "Instructor Only",
+      "item": [
+        {
+          "name": "My Courses",
+          "item": [
+            {
+              "name": "Get My Courses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/my-courses",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "instructor-course", "my-courses"]
+                },
+                "description": "Get all courses assigned to me"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Course Details",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/my-courses/{{course_id}}",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "instructor-course",
+                    "my-courses",
+                    "{{course_id}}"
+                  ]
+                },
+                "description": "Get details of a specific course I'm assigned to"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Courses with Topics",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/my-courses-with-topics",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "instructor-course", "my-courses-with-topics"]
+                },
+                "description": "Get all my courses with their topics"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Course Topics Management",
+          "item": [
+            {
+              "name": "Add Topic to Course",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"courseId\": {{course_id}},\n  \"topicName\": \"AI Algorithms\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/course-topic",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "instructor-course", "course-topic"]
+                },
+                "description": "Add a new topic to a course"
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Topic from Course",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/instructor-course/course-topic/{{course_id}}/AI%20Algorithms",
+                  "host": ["{{base_url}}"],
+                  "path": [
+                    "api",
+                    "instructor-course",
+                    "course-topic",
+                    "{{course_id}}",
+                    "AI%20Algorithms"
+                  ]
+                },
+                "description": "Remove a topic from a course"
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "APIs exclusive to Instructors - Requires Instructor role"
+    },
+    {
+      "name": "Student Portal",
+      "item": [
+        {
+          "name": "My Courses",
+          "item": [
+            {
+              "name": "Get My Courses",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/students/courses",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "students", "courses"]
+                },
+                "description": "Get my enrolled courses"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "My Exams",
+          "item": [
+            {
+              "name": "Get Available Exams",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/student/available",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "student", "available"]
+                },
+                "description": "Get all available exams I can take"
+              },
+              "response": []
+            },
+            {
+              "name": "Get My Taken Exams",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/student/my-exams",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "student", "my-exams"]
+                },
+                "description": "Get all exams I have taken"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Exam Questions (Student)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/{{exam_id}}/questions",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "{{exam_id}}", "questions"]
+                },
+                "description": "Get all questions in an exam (to take the exam)"
+              },
+              "response": []
+            },
+            {
+              "name": "Submit All Answers",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"examId\": 3,\n  \"answers\": [\n    {\n      \"questionId\": 159,\n      \"studentAnswer\": \"True\"\n    },\n    {\n      \"questionId\": 161,\n      \"studentAnswer\": \"Model is too simple\"\n    },\n    {\n      \"questionId\": 163,\n      \"studentAnswer\": \"Regression models\"\n    },\n    {\n      \"questionId\": 175,\n      \"studentAnswer\": \"Classification\"\n    },\n    {\n      \"questionId\": 186,\n      \"studentAnswer\": \"True\"\n    },\n    {\n      \"questionId\": 188,\n      \"studentAnswer\": \"SVM\"\n    },\n    {\n      \"questionId\": 194,\n      \"studentAnswer\": \"Random Forest\"\n    },\n    {\n      \"questionId\": 220,\n      \"studentAnswer\": \"True\"\n    },\n    {\n      \"questionId\": 226,\n      \"studentAnswer\": \"True\"\n    },\n    {\n      \"questionId\": 229,\n      \"studentAnswer\": \"True\"\n    }\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/exams/student/submit-answers",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "student", "submit-answers"]
+                },
+                "description": "Submit all exam answers at once - Example with Exam ID 3"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Exam Results",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/exams/student/{{exam_id}}/correct",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "exams", "student", "{{exam_id}}", "correct"]
+                },
+                "description": "Get exam correction and final grade"
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "description": "APIs for students to view their own data"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "student_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "instructor_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "branch_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "track_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "course_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
