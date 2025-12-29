@@ -142,10 +142,13 @@ export const assignQuestionGrade = async (req, res) => {
     const response = result.recordset[0];
     const message = response.message || Object.values(response)[0];
 
-    if (message.includes("successfully")) {
+    // Convert message to string to safely use .includes()
+    const messageStr = String(message);
+
+    if (messageStr.includes("successfully")) {
       return res.status(200).json({
         success: true,
-        message,
+        message: messageStr,
         data: {
           examId: parseInt(examId),
           questionId: parseInt(questionId),
@@ -155,7 +158,7 @@ export const assignQuestionGrade = async (req, res) => {
     } else {
       return res.status(400).json({
         success: false,
-        message,
+        message: messageStr,
       });
     }
   } catch (error) {
@@ -220,30 +223,34 @@ export const finalizeExam = async (req, res) => {
       exam_id: { type: sql.Int, value: parseInt(id) },
     });
 
-    const response = result.recordset[result.recordset.length - 1]; // Last result
-    const message = response.Result || Object.values(response)[0];
+    const response = result.recordset[0];
 
-    if (message.includes("successfully")) {
-      return res.status(200).json({
-        success: true,
-        message,
-      });
-    } else {
-      return res.status(400).json({
+    if (!response) {
+      return res.status(500).json({
         success: false,
-        message,
+        message: "No response from finalize procedure",
       });
     }
+
+    if (response.IsFinalized === 1) {
+      return res.status(200).json({
+        success: true,
+        message: response.Message,
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message: response.Message,
+    });
   } catch (error) {
     console.error("Error in finalizeExam:", error);
     return res.status(500).json({
       success: false,
       message: "An error occurred while finalizing exam",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
-
 // =============================================
 // Get Instructor Exams (Instructor Only)
 // =============================================
