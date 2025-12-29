@@ -125,7 +125,6 @@ export const assignQuestionGrade = async (req, res) => {
   try {
     const { examId, questionId, questionGrade } = req.body;
 
-    // Validation
     if (!examId || !questionId || questionGrade === undefined) {
       return res.status(400).json({
         success: false,
@@ -134,39 +133,41 @@ export const assignQuestionGrade = async (req, res) => {
     }
 
     const result = await executeStoredProcedure("sp_assign_question_grade", {
-      exam_id: { type: sql.Int, value: parseInt(examId) },
-      question_id: { type: sql.Int, value: parseInt(questionId) },
-      question_grade: { type: sql.Int, value: parseInt(questionGrade) },
+      exam_id: { type: sql.Int, value: +examId },
+      question_id: { type: sql.Int, value: +questionId },
+      question_grade: { type: sql.Int, value: +questionGrade },
     });
 
     const response = result.recordset[0];
-    const message = response.message || Object.values(response)[0];
 
-    // Convert message to string to safely use .includes()
-    const messageStr = String(message);
-
-    if (messageStr.includes("successfully")) {
-      return res.status(200).json({
-        success: true,
-        message: messageStr,
-        data: {
-          examId: parseInt(examId),
-          questionId: parseInt(questionId),
-          questionGrade: parseInt(questionGrade),
-        },
-      });
-    } else {
-      return res.status(400).json({
+    if (!response) {
+      return res.status(500).json({
         success: false,
-        message: messageStr,
+        message: "No response from assign question grade procedure",
       });
     }
+
+    if (response.IsSuccess === 1) {
+      return res.status(200).json({
+        success: true,
+        message: response.Message,
+        data: {
+          examId: +examId,
+          questionId: +questionId,
+          questionGrade: +questionGrade,
+        },
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      message: response.Message,
+    });
   } catch (error) {
     console.error("Error in assignQuestionGrade:", error);
     return res.status(500).json({
       success: false,
       message: "An error occurred while assigning question grade",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
