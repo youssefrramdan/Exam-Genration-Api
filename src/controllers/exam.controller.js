@@ -180,17 +180,36 @@ export const validateExamGrade = async (req, res) => {
     });
 
     const response = result.recordset[0];
-    const message = response.Result || Object.values(response)[0];
 
-    if (message.includes("valid")) {
+    // Get the message - can be in 'Result', 'Message', or the first column
+    const message =
+      response.Result || response.Message || Object.values(response)[0];
+
+    // Check for error cases
+    if (message.includes("not found")) {
+      return res.status(404).json({
+        success: false,
+        message: message,
+      });
+    }
+
+    // Check if validation is successful
+    if (message.includes("valid") || message.includes("Exam grade is valid")) {
       return res.status(200).json({
         success: true,
-        message,
+        message: message,
+        data: {
+          isValid: true,
+        },
       });
     } else {
+      // Validation failed - total questions grade doesn't match
       return res.status(400).json({
         success: false,
-        message,
+        message: message,
+        data: {
+          isValid: false,
+        },
       });
     }
   } catch (error) {
