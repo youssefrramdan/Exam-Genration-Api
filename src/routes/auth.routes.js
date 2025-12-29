@@ -6,7 +6,7 @@ import {
   getProfile,
   changePassword,
 } from "../controllers/auth.controller.js";
-import { authenticate } from "../middlewares/auth.middleware.js";
+import { protectedRoutes } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -36,13 +36,13 @@ router.post("/login", login);
  * @desc    Get current user profile
  * @access  Private
  */
-router.get("/me", authenticate, getProfile);
+router.get("/me", protectedRoutes, getProfile);
 
 /**
  * @route   PUT /api/auth/change-password
  * @desc    Change user password
  * @access  Private
  */
-router.put("/change-password", authenticate, changePassword);
+router.put("/change-password", protectedRoutes, changePassword);
 
 export default router;

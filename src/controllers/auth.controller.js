@@ -1,159 +1,104 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sql, executeStoredProcedure } from "../config/db.js";
+import ApiError from "../utils/apiError.js";
+import asyncHandler from "express-async-handler";
 
 /**
  * Login user (Student or Instructor)
  * @route POST /api/auth/login
  * @access Public
  */
-const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+const login = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new ApiError(400, "Please provide email and password"));
+  }
+  // Call stored procedure sp_login
+  const result = await executeStoredProcedure("sp_login", {
+    email: { type: sql.VarChar(100), value: email },
+    password: { type: sql.VarChar(100), value: password },
+  });
 
-    // Validation
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide email and password",
-      });
+  // Check if user exists
+  if (!result.recordset || result.recordset.length === 0) {
+    return next(new ApiError(401, "Invalid email or password"));
+  }
+
+  const user = result.recordset[0];
+
+  // Check if account is active
+  if (!user.is_active) {
+    return next(new ApiError(403, "Your account has been deactivated."));
+  }
+
+  // Compare password with bcrypt
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    return next(new ApiError(401, "Invalid email or password"));
+  }
+
+  // Generate JWT token
+  const token = jwt.sign(
+    {
+      userId: user.user_id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || "24h",
     }
+  );
 
-    // Call stored procedure sp_login
-    const result = await executeStoredProcedure("sp_login", {
-      email: { type: sql.VarChar(100), value: email },
-    });
-
-    // Check if user exists
-    if (!result.recordset || result.recordset.length === 0) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    const user = result.recordset[0];
-
-    // Check if account is active
-    if (!user.is_active) {
-      return res.status(403).json({
-        success: false,
-        message: "Your account has been deactivated. Please contact support.",
-      });
-    }
-
-    // Compare password with bcrypt
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        userId: user.user_id,
+  // Return success response
+  res.status(200).json({
+    success: true,
+    message: "Login successful",
+    data: {
+      token,
+      user: {
+        id: user.user_id,
+        name: user.full_name,
+        email: user.email,
         role: user.role,
       },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN || "24h",
-      }
-    );
-
-    // Return success response
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      data: {
-        token,
-        user: {
-          id: user.user_id,
-          name: user.full_name,
-          email: user.email,
-          role: user.role,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred during login",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
+    },
+  });
+});
 
 /**
  * Get current user profile
  * @route GET /api/auth/me
  * @access Private
  */
-const getProfile = async (req, res) => {
-  try {
-    const { userId, role } = req.user;
-
-    // Determine which stored procedure to call based on role
-    let procedureName;
-    let params;
-
-    if (role === "Student") {
-      // Call sp_select_student or similar (you may need to create this)
-      procedureName = "sp_select_students";
-      params = {};
-    } else if (role === "Instructor") {
-      procedureName = "sp_select_instructor";
-      params = {
-        id: { type: sql.Int, value: userId },
-      };
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid user role",
-      });
-    }
-
-    const result = await executeStoredProcedure(procedureName, params);
-
-    if (!result.recordset || result.recordset.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Filter by userId if getting all students
-    let userProfile = result.recordset[0];
-    if (role === "Student") {
-      userProfile = result.recordset.find((s) => s.student_id === userId);
-      if (!userProfile) {
-        return res.status(404).json({
-          success: false,
-          message: "Student not found",
-        });
-      }
-    }
-
-    // Remove sensitive data
-    delete userProfile.password;
-
-    res.status(200).json({
-      success: true,
-      data: userProfile,
-    });
-  } catch (error) {
-    console.error("Get profile error:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while fetching profile",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
+const getProfile = asyncHandler(async (req, res, next) => {
+  const { userId, role } = req.user;
+  let procedureName;
+  const params = {
+    id: { type: sql.Int, value: userId },
+  };
+  if (role === "Student") {
+    procedureName = "sp_select_student";
+  } else if (role === "Instructor") {
+    procedureName = "sp_select_instructor";
+  } else {
+    return next(new ApiError(400, "Invalid user role"));
   }
-};
+
+  const result = await executeStoredProcedure(procedureName, params);
+
+  if (!result.recordset || result.recordset.length === 0) {
+    return next(404, "User not found");
+  }
+
+  delete userProfile.password;
+
+  res.status(200).json({
+    success: true,
+    data: userProfile,
+  });
+});
 
 /**
  * Change password

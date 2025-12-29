@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { authenticate, authorize } from "../middlewares/auth.middleware.js";
+import { protectedRoutes, allowTo } from "../middlewares/auth.middleware.js";
 import {
   generateExam,
   getExamQuestions,
@@ -14,90 +14,82 @@ import {
   getStudentExams,
 } from "../controllers/exam.controller.js";
 
-// =============================================
-// Instructor Routes
-// =============================================
-
 // Generate exam (Instructor only)
-router.post("/generate", authenticate, authorize(["Instructor"]), generateExam);
+router.post("/generate", protectedRoutes, allowTo("Instructor"), generateExam);
 
 // Get instructor's exams (Instructor only)
 router.get(
   "/instructor/my-exams",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   getInstructorExams
 );
 
 // Assign question grade (Instructor only)
 router.post(
   "/assign-grade",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   assignQuestionGrade
 );
 
 // Validate exam grade (Instructor only)
 router.get(
   "/:id/validate",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   validateExamGrade
 );
 
 // Finalize exam (Instructor only)
 router.post(
   "/:id/finalize",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   finalizeExam
 );
 
-// =============================================
+
 // Student Routes
-// =============================================
 
 // Get available exams (Student only)
 router.get(
   "/student/available",
-  authenticate,
-  authorize(["Student"]),
+  protectedRoutes,
+  allowTo("Student"),
   getAvailableExamsForStudent
 );
 
 // Get student's taken exams (Student only)
 router.get(
   "/student/my-exams",
-  authenticate,
-  authorize(["Student"]),
+  protectedRoutes,
+  allowTo("Student"),
   getStudentExams
 );
 
 // Submit all exam answers (Student only)
 router.post(
   "/student/submit-answers",
-  authenticate,
-  authorize(["Student"]),
+  protectedRoutes,
+  allowTo("Student"),
   submitExamAnswers
 );
 
 // Correct exam and get results (Student only)
 router.get(
   "/student/:examId/correct",
-  authenticate,
-  authorize(["Student"]),
+  protectedRoutes,
+  allowTo("Student"),
   correctExam
 );
 
-// =============================================
 // Shared Routes (Both Instructor & Student)
-// =============================================
-
 // Get exam questions (Both roles)
 router.get(
   "/:id/questions",
-  authenticate,
-  authorize(["Instructor", "Student"]),
+  protectedRoutes,
+  allowTo("Instructor", "Student"),
   getExamQuestions
 );
 

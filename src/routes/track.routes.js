@@ -7,21 +7,21 @@ import {
   getAllTracks,
   getTrackById,
 } from "../controllers/track.controller.js";
-import { authenticate, authorize } from "../middlewares/auth.middleware.js";
+import { protectedRoutes, allowTo } from "../middlewares/auth.middleware.js";
 
-// Get all tracks (accessible to authenticated users)
-router.get("/", authenticate, getAllTracks);
+// Get all tracks (accessible to protectedRoutes d users)
+router.get("/", protectedRoutes, getAllTracks);
 
-// Get track by ID (accessible to authenticated users)
-router.get("/:id", authenticate, getTrackById);
+// Get track by ID (accessible to protectedRoutes d users)
+router.get("/:id", protectedRoutes, getTrackById);
 
 // Create track (Instructor only)
-router.post("/", authenticate, authorize(["Instructor"]), createTrack);
+router.post("/", protectedRoutes, allowTo("Instructor"), createTrack);
 
 // Update track (Instructor only)
-router.put("/:id", authenticate, authorize(["Instructor"]), updateTrack);
+router.put("/:id", protectedRoutes, allowTo("Instructor"), updateTrack);
 
 // Delete track (Instructor only)
-router.delete("/:id", authenticate, authorize(["Instructor"]), deleteTrack);
+router.delete("/:id", protectedRoutes, allowTo("Instructor"), deleteTrack);
 
 export default router;

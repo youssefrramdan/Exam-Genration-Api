@@ -1217,7 +1217,7 @@
           "response": []
         }
       ],
-      "description": "APIs for managing user profile - Available to all authenticated users"
+      "description": "APIs for managing user profile - Available to all protectedRoutes d users"
     },
     {
       "name": "Browse (Student & Instructor)",
@@ -1408,7 +1408,7 @@
           ]
         }
       ],
-      "description": "Read-only APIs - Available to all authenticated users"
+      "description": "Read-only APIs - Available to all protectedRoutes d users"
     },
     {
       "name": "Instructor Only",

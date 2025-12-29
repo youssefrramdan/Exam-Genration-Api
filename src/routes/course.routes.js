@@ -7,21 +7,21 @@ import {
   getAllCourses,
   getCourseById,
 } from "../controllers/course.controller.js";
-import { authenticate, authorize } from "../middlewares/auth.middleware.js";
+import { protectedRoutes, allowTo } from "../middlewares/auth.middleware.js";
 
-// Get all courses (accessible to authenticated users)
-router.get("/", authenticate, getAllCourses);
+// Get all courses
+router.get("/", protectedRoutes, getAllCourses);
 
-// Get course by ID (accessible to authenticated users)
-router.get("/:id", authenticate, getCourseById);
+// Get course by ID
+router.get("/:id", protectedRoutes, getCourseById);
 
 // Create course (Instructor only)
-router.post("/", authenticate, authorize(["Instructor"]), createCourse);
+router.post("/", protectedRoutes, allowTo("Instructor"), createCourse);
 
 // Update course (Instructor only)
-router.put("/:id", authenticate, authorize(["Instructor"]), updateCourse);
+router.put("/:id", protectedRoutes, allowTo("Instructor"), updateCourse);
 
 // Delete course (Instructor only)
-router.delete("/:id", authenticate, authorize(["Instructor"]), deleteCourse);
+router.delete("/:id", protectedRoutes, allowTo("Instructor"), deleteCourse);
 
 export default router;

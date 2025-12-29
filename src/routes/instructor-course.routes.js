@@ -10,29 +10,29 @@ import {
   deleteCourseTopic,
   assignInstructorToTrack,
 } from "../controllers/instructor-course.controller.js";
-import { authenticate, authorize } from "../middlewares/auth.middleware.js";
+import { protectedRoutes, allowTo } from "../middlewares/auth.middleware.js";
 
 // Get instructor's courses (current logged-in instructor)
 router.get(
   "/my-courses",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   getInstructorCourses
 );
 
 // Get instructor's course details
 router.get(
   "/my-courses/:courseId",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   getInstructorCourseDetails
 );
 
 // Get instructor's courses with topics
 router.get(
   "/my-courses-with-topics",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   getInstructorCoursesWithTopics
 );
 
@@ -41,40 +41,40 @@ router.get(
 // Assign instructor to course
 router.post(
   "/assign-course",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   assignInstructorToCourse
 );
 
 // Remove instructor from course
 router.delete(
   "/assign-course/:instructorId/:courseId",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   deassignInstructorFromCourse
 );
 
 // Add topic to course
 router.post(
   "/course-topic",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   addCourseTopic
 );
 
 // Remove topic from course
 router.delete(
   "/course-topic/:courseId/:topicName",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   deleteCourseTopic
 );
 
 // Assign instructor to track
 router.post(
   "/assign-track",
-  authenticate,
-  authorize(["Instructor"]),
+  protectedRoutes,
+  allowTo("Instructor"),
   assignInstructorToTrack
 );
 
