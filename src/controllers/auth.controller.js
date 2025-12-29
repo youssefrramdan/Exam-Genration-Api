@@ -12,34 +12,28 @@ import asyncHandler from "express-async-handler";
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(new ApiError(400, "Please provide email and password"));
+    return next(new ApiError(400, "Please provide email and password", false));
   }
-  // Call stored procedure sp_login
   const result = await executeStoredProcedure("sp_login", {
     email: { type: sql.VarChar(100), value: email },
-    password: { type: sql.VarChar(100), value: password },
   });
 
-  // Check if user exists
   if (!result.recordset || result.recordset.length === 0) {
-    return next(new ApiError(401, "Invalid email or password"));
+    return next(new ApiError(401, "Invalid email or password", false));
   }
 
   const user = result.recordset[0];
 
-  // Check if account is active
   if (!user.is_active) {
-    return next(new ApiError(403, "Your account has been deactivated."));
+    return next(new ApiError(403, "Your account has been deactivated", false));
   }
 
-  // Compare password with bcrypt
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    return next(new ApiError(401, "Invalid email or password"));
+    return next(new ApiError(401, "Invalid email or password", false));
   }
 
-  // Generate JWT token
   const token = jwt.sign(
     {
       userId: user.user_id,
@@ -51,7 +45,6 @@ const login = asyncHandler(async (req, res, next) => {
     }
   );
 
-  // Return success response
   res.status(200).json({
     success: true,
     message: "Login successful",
@@ -105,90 +98,68 @@ const getProfile = asyncHandler(async (req, res, next) => {
  * @route PUT /api/auth/change-password
  * @access Private
  */
-const changePassword = async (req, res) => {
-  try {
-    const { userId, role } = req.user;
-    const { currentPassword, newPassword } = req.body;
+const changePassword = asyncHandler(async (req, res, next) => {
+  const { userId, role } = req.user;
+  const { currentPassword, newPassword } = req.body;
 
-    // Validation
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide current password and new password",
-      });
-    }
-
-    if (newPassword.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "New password must be at least 6 characters long",
-      });
-    }
-
-    // Get user's current password hash
-    // You'll need to create stored procedures: sp_get_student_password and sp_get_instructor_password
-    const getProcedure =
-      role === "Student"
-        ? "sp_get_student_password"
-        : "sp_get_instructor_password";
-
-    const result = await executeStoredProcedure(getProcedure, {
-      id: { type: sql.Int, value: userId },
-    });
-
-    if (!result.recordset || result.recordset.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    const user = result.recordset[0];
-
-    // Verify current password
-    const isPasswordValid = await bcrypt.compare(
-      currentPassword,
-      user.password
+  // Validation
+  if (!currentPassword || !newPassword) {
+    return next(
+      new ApiError(400, "Please provide current password and new password")
     );
-
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        message: "Current password is incorrect",
-      });
-    }
-
-    // Hash new password
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      parseInt(process.env.BCRYPT_ROUNDS) || 10
-    );
-
-    // Update password using stored procedure
-    // You'll need to create: sp_update_student_password and sp_update_instructor_password
-    const updateProcedure =
-      role === "Student"
-        ? "sp_update_student_password"
-        : "sp_update_instructor_password";
-
-    await executeStoredProcedure(updateProcedure, {
-      id: { type: sql.Int, value: userId },
-      password: { type: sql.VarChar(255), value: hashedPassword },
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Password changed successfully",
-    });
-  } catch (error) {
-    console.error("Change password error:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while changing password",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
   }
-};
+
+  if (newPassword.length < 6) {
+    return next(
+      new ApiError(400, "New password must be at least 6 characters long")
+    );
+  }
+
+  // Get user's current password hash
+  // sp_get_student_password and sp_get_instructor_password
+  const getProcedure =
+    role === "Student"
+      ? "sp_get_student_password"
+      : "sp_get_instructor_password";
+
+  const result = await executeStoredProcedure(getProcedure, {
+    id: { type: sql.Int, value: userId },
+  });
+
+  if (!result.recordset || result.recordset.length === 0) {
+    return next(new ApiError(404, "User not found"));
+  }
+
+  const user = result.recordset[0];
+  const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+  if (!isPasswordValid) {
+    return next(new ApiError(400, "Current password is incorrect"));
+  }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    parseInt(process.env.BCRYPT_ROUNDS) || 10
+  );
+
+  // Update password using stored procedure
+  // sp_update_student_password and sp_update_instructor_password
+  const updateProcedure =
+    role === "Student"
+      ? "sp_update_student_password"
+      : "sp_update_instructor_password";
+
+  await executeStoredProcedure(updateProcedure, {
+    id: { type: sql.Int, value: userId },
+    password: { type: sql.VarChar(255), value: hashedPassword },
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Password changed successfully",
+  });
+});
 
 /**
  * Add student user
@@ -196,97 +167,74 @@ const changePassword = async (req, res) => {
  * @access Public
  */
 const addUserStudent = async (req, res) => {
-  try {
-    const { name, email, password, dateOfBirth, trackId, phone, address } =
-      req.body;
+  const { name, email, password, dateOfBirth, trackId, phone, address } =
+    req.body;
 
-    // Validation
-    if (!name || !email || !password || !dateOfBirth || !trackId) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please provide name, email, password, date of birth, and track ID",
-      });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide a valid email address",
-      });
-    }
-
-    // Validate password strength
-    if (password.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 6 characters long",
-      });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(
-      password,
-      parseInt(process.env.BCRYPT_ROUNDS) || 10
+  if (!name || !email || !password || !dateOfBirth || !trackId) {
+    return next(
+      new ApiError(
+        400,
+        "Please provide name, email, password, date of birth, and track ID"
+      )
     );
+  }
 
-    // Call stored procedure
-    const result = await executeStoredProcedure("sp_add_user_student", {
-      student_name: { type: sql.VarChar(100), value: name },
-      student_email: { type: sql.VarChar(100), value: email },
-      password: { type: sql.VarChar(255), value: hashedPassword },
-      date_of_birth: { type: sql.Date, value: new Date(dateOfBirth) },
-      tr_id: { type: sql.Int, value: trackId },
-      phone: { type: sql.VarChar(20), value: phone || null },
-      address: { type: sql.VarChar(255), value: address || null },
-    });
+  // Validate password strength
+  if (password.length < 6) {
+    return next(
+      new ApiError(400, "Password must be at least 6 characters long")
+    );
+  }
 
-    const data = result.recordset[0];
+  // Hash password
+  const hashedPassword = await bcrypt.hash(
+    password,
+    parseInt(process.env.BCRYPT_ROUNDS) || 10
+  );
 
-    // Check if registration failed
-    if (data.result === -1) {
-      return res.status(400).json({
-        success: false,
-        message: data.message,
-      });
+  // Call stored procedure
+  const result = await executeStoredProcedure("sp_add_user_student", {
+    student_name: { type: sql.VarChar(100), value: name },
+    student_email: { type: sql.VarChar(100), value: email },
+    password: { type: sql.VarChar(255), value: hashedPassword },
+    date_of_birth: { type: sql.Date, value: new Date(dateOfBirth) },
+    tr_id: { type: sql.Int, value: trackId },
+    phone: { type: sql.VarChar(20), value: phone || null },
+    address: { type: sql.VarChar(255), value: address || null },
+  });
+
+  const data = result.recordset[0];
+
+  // Check if adding failed
+  if (data.result === -1) {
+    return next(new ApiError(400, data.message));
+  }
+
+  // Generate JWT token
+  const token = jwt.sign(
+    {
+      userId: data.user_id,
+      role: data.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || "24h",
     }
+  );
 
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        userId: data.user_id,
+  res.status(201).json({
+    success: true,
+    message: "Student added successfully",
+    data: {
+      token,
+      user: {
+        id: data.user_id,
+        name: data.full_name,
+        email: data.email,
         role: data.role,
       },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN || "24h",
-      }
-    );
-
-    // Return success response
-    res.status(201).json({
-      success: true,
-      message: "Student added successfully",
-      data: {
-        token,
-        user: {
-          id: data.user_id,
-          name: data.full_name,
-          email: data.email,
-          role: data.role,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Add student error:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while adding student",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
+    },
+  });
 };
 
 /**
@@ -295,95 +243,71 @@ const addUserStudent = async (req, res) => {
  * @access Public
  */
 const addUserInstructor = async (req, res) => {
-  try {
-    const { name, email, password, dateOfBirth, phone, specialization } =
-      req.body;
+  const { name, email, password, dateOfBirth, phone, specialization } =
+    req.body;
 
-    // Validation
-    if (!name || !email || !password || !dateOfBirth) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide name, email, password, and date of birth",
-      });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Please provide a valid email address",
-      });
-    }
-
-    // Validate password strength
-    if (password.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 6 characters long",
-      });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(
-      password,
-      parseInt(process.env.BCRYPT_ROUNDS) || 10
+  if (!name || !email || !password || !dateOfBirth) {
+    return next(
+      new ApiError(400, "Please provide name, email, password, date of birth")
     );
+  }
 
-    // Call stored procedure
-    const result = await executeStoredProcedure("sp_add_user_instructor", {
-      instructor_name: { type: sql.VarChar(100), value: name },
-      instructor_email: { type: sql.VarChar(100), value: email },
-      password: { type: sql.VarChar(255), value: hashedPassword },
-      date_of_birth: { type: sql.Date, value: new Date(dateOfBirth) },
-      phone: { type: sql.VarChar(20), value: phone || null },
-      specialization: { type: sql.VarChar(100), value: specialization || null },
-    });
+  // Validate password strength
+  if (password.length < 6) {
+    return next(
+      new ApiError(400, "Password must be at least 6 characters long")
+    );
+  }
 
-    const data = result.recordset[0];
+  // Hash password
+  const hashedPassword = await bcrypt.hash(
+    password,
+    parseInt(process.env.BCRYPT_ROUNDS) || 10
+  );
 
-    // Check if registration failed
-    if (data.result === -1) {
-      return res.status(400).json({
-        success: false,
-        message: data.message,
-      });
+  // Call stored procedure
+  const result = await executeStoredProcedure("sp_add_user_instructor", {
+    instructor_name: { type: sql.VarChar(100), value: name },
+    instructor_email: { type: sql.VarChar(100), value: email },
+    password: { type: sql.VarChar(255), value: hashedPassword },
+    date_of_birth: { type: sql.Date, value: new Date(dateOfBirth) },
+    phone: { type: sql.VarChar(20), value: phone || null },
+    specialization: { type: sql.VarChar(100), value: specialization || null },
+  });
+
+  const data = result.recordset[0];
+
+  // Check if adding failed
+  if (data.result === -1) {
+    return next(new ApiError(400, data.message));
+  }
+
+  // Generate JWT token
+  const token = jwt.sign(
+    {
+      userId: data.user_id,
+      role: data.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || "24h",
     }
+  );
 
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        userId: data.user_id,
+  // Return success response
+  res.status(201).json({
+    success: true,
+    message: "Instructor added successfully",
+    data: {
+      token,
+      user: {
+        id: data.user_id,
+        name: data.full_name,
+        email: data.email,
         role: data.role,
       },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN || "24h",
-      }
-    );
-
-    // Return success response
-    res.status(201).json({
-      success: true,
-      message: "Instructor added successfully",
-      data: {
-        token,
-        user: {
-          id: data.user_id,
-          name: data.full_name,
-          email: data.email,
-          role: data.role,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Add instructor error:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while adding instructor",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
+    },
+  });
 };
 
 export { login, addUserStudent, addUserInstructor, getProfile, changePassword };
