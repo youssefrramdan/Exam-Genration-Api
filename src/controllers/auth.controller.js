@@ -166,7 +166,7 @@ const changePassword = asyncHandler(async (req, res, next) => {
  * @route POST /api/auth/add-user/student
  * @access Public
  */
-const addUserStudent = async (req, res) => {
+const addUserStudent = async (req, res,next) => {
   const { name, email, password, dateOfBirth, trackId, phone, address } =
     req.body;
 
@@ -242,7 +242,7 @@ const addUserStudent = async (req, res) => {
  * @route POST /api/auth/add-user/instructor
  * @access Public
  */
-const addUserInstructor = async (req, res) => {
+const addUserInstructor = async (req, res,next) => {
   const { name, email, password, dateOfBirth, phone, specialization } =
     req.body;
 
