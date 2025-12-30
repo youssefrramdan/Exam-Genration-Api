@@ -7,7 +7,10 @@ import ApiError from "../utils/apiError.js";
  */
 const protectedRoutes = asyncHandler((req, res, next) => {
   let token;
-  if (req.headers.authorization && req.headers.startWith(`Bearer`)) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith(`Bearer`)
+  ) {
     token = req.headers.authorization.split(" ")[1];
   }
 

@@ -19,6 +19,11 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
+
+// Trust proxy - required when behind a reverse proxy (e.g., Render, Heroku, nginx)
+// This allows express-rate-limit to correctly identify users by their real IP
+app.set("trust proxy", 1);
+
 app.use(helmet());
 const corsOptions = {
   origin: process.env.CORS_ORIGIN || "*",
